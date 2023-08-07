@@ -1,3 +1,4 @@
+using _Game.Scripts.LiDAR;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -10,7 +11,7 @@ public class InputManager : MonoBehaviour
     
     // New variable to handle shooting
     private bool _isScanning;
-    //[SerializeField] private RayGun _rayGun;
+    [SerializeField] private RayGun _rayGun;
 
     private void Awake()
     {
@@ -21,8 +22,24 @@ public class InputManager : MonoBehaviour
         _playerLook = GetComponent<PlayerLook>();
 
         _onFootActions.Jump.performed += _ => _playerController.Jump();
+
+        // Add listeners for the shoot action
+        _onFootActions.Scan.started += _ => StartShooting();
+        _onFootActions.Scan.canceled += _ => StopShooting();
     }
-    
+
+    private void StartShooting()
+    {
+        _isScanning = true;
+        _rayGun.Scanning = true;
+    }
+
+    private void StopShooting()
+    {
+        _isScanning = false;
+        _rayGun.Scanning = false;
+    }
+
     private void FixedUpdate()
     {
         _playerController.ProcessMove(_onFootActions.Movement.ReadValue<Vector2>());
