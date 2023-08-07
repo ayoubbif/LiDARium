@@ -43,11 +43,6 @@ public class InputManager : MonoBehaviour
     private void FixedUpdate()
     {
         _playerController.ProcessMove(_onFootActions.Movement.ReadValue<Vector2>());
-
-        if (_isScanning)
-        {
-            // Add continuous shooting logic here (if needed)
-        }
     }
 
     private void LateUpdate()
