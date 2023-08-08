@@ -14,6 +14,7 @@ public class MenuManager : Singleton<MenuManager>
         {
             Debug.LogError("One or more of the required GameObjects is not assigned in the editor.");
             enabled = false;
+            
             CursorUtils.LockCursor();
         }
     }

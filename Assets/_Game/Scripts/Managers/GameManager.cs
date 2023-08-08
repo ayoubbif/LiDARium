@@ -1,3 +1,4 @@
+using System;
 using _Game.Scripts.Utils;
 using UnityEngine;
 
@@ -5,6 +6,11 @@ public class GameManager : Singleton<GameManager>
 {
     [SerializeField] private GameObject pauseMenuUI;
     private bool _isPaused;
+
+    private void Start()
+    {
+        CursorUtils.LockCursor();
+    }
 
     public void TogglePauseMenu()
     {
