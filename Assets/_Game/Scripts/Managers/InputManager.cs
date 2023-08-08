@@ -1,7 +1,7 @@
 using _Game.Scripts.LiDAR;
 using UnityEngine;
 
-public class InputManager : MonoBehaviour
+public class InputManager : Singleton<InputManager>
 {
     [Header("Components")]
     [SerializeField] private PlayerController _playerController;
@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
     private PlayerInput _playerInput;
     private PlayerInput.OnFootActions _onFootActions;
 
-    private void Awake()
+    protected override void Awake()
     {
         InitializeComponents();
         SetupInputActions();
@@ -20,7 +20,9 @@ public class InputManager : MonoBehaviour
     private void InitializeComponents()
     {
         _playerInput = new PlayerInput();
+        
         _onFootActions = _playerInput.OnFoot;
+        //_inGameActions = _playerInput.InGame;
 
         if (!_playerController) _playerController = GetComponent<PlayerController>();
         if (!_playerLook) _playerLook = GetComponent<PlayerLook>();
@@ -29,15 +31,25 @@ public class InputManager : MonoBehaviour
 
     private void SetupInputActions()
     {
-        _onFootActions.Jump.performed += _ => _playerController.Jump();
+        _onFootActions.Enable();
+        
+        // Jump
+        _onFootActions.Jump.performed += _ =>
+        {
+            _playerController.Jump();
+        };
 
         // Shooting actions
         _onFootActions.Scan.started += _ => ChangeRayGunState(true);
         _onFootActions.Scan.canceled += _ => ChangeRayGunState(false);
         _onFootActions.Paint.started += _ => ChangeRayGunPaintingState(true);
         _onFootActions.Paint.canceled += _ => ChangeRayGunPaintingState(false);
-
-        _onFootActions.Enable();
+        
+        // Pause Menu
+        _onFootActions.Menu.started += _ =>
+        {
+            GameManager.Instance.TogglePauseMenu();
+        };
     }
 
     private void ChangeRayGunState(bool scanning)
