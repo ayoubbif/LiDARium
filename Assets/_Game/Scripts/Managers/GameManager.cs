@@ -1,3 +1,4 @@
+using _Game.Scripts.Utils;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
@@ -10,6 +11,15 @@ public class GameManager : Singleton<GameManager>
         _isPaused = !_isPaused;
 
         pauseMenuUI.SetActive(_isPaused);
+
+        if (_isPaused)
+        {
+            CursorUtils.UnlockCursor();
+        }
+        else
+        {
+            CursorUtils.LockCursor();
+        }
 
         Time.timeScale = _isPaused ? 0f : 1f;
     }

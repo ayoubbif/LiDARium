@@ -1,3 +1,4 @@
+using _Game.Scripts.Utils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -39,6 +40,8 @@ public class MenuManager : Singleton<MenuManager>
     {
         optionsMenuUI.SetActive(false);
         mainMenuUI.SetActive(true);
+
+        CursorUtils.UnlockCursor();
     }
     
     public void QuitGame()
