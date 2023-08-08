@@ -10,7 +10,6 @@ public class InputManager : Singleton<InputManager>
 
     private PlayerInput _playerInput;
     private PlayerInput.OnFootActions _onFootActions;
-    //private PlayerInput.InGameActions _inGameActions;
 
     protected override void Awake()
     {
@@ -46,22 +45,11 @@ public class InputManager : Singleton<InputManager>
         _onFootActions.Paint.started += _ => ChangeRayGunPaintingState(true);
         _onFootActions.Paint.canceled += _ => ChangeRayGunPaintingState(false);
         
-        // Menu
+        // Pause Menu
         _onFootActions.Menu.started += _ =>
         {
-            GameManager.Instance.TogglePause();
-            
-            // Show/hide the main menu based on the pause state
-            if (GameManager.Instance.IsGamePaused)
-            {
-                MenuManager.Instance.ShowMainMenu();
-            }
-            else
-            {
-                MenuManager.Instance.HideMainMenu();
-            }
+            GameManager.Instance.TogglePauseMenu();
         };
-
     }
 
     private void ChangeRayGunState(bool scanning)

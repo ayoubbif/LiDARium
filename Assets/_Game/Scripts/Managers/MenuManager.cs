@@ -1,24 +1,34 @@
-using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuManager : Singleton<MenuManager>
 {
-    [SerializeField] private GameObject startMenu;
     [SerializeField] private GameObject mainMenuUI;
     [SerializeField] private GameObject optionsMenuUI;
 
-    public void StartGame()
+    private void Start()
     {
-        SceneManager.LoadScene("Game");
-    
-        // // Hide and lock the cursor
-        // Cursor.lockState = CursorLockMode.Locked;
-        // Cursor.visible = false;
-        
-        startMenu.SetActive(false);
+        // Check if GameObjects are assigned.
+        if (mainMenuUI == null || optionsMenuUI == null)
+        {
+            Debug.LogError("One or more of the required GameObjects is not assigned in the editor.");
+            enabled = false;
+        }
     }
 
-    
+    public void StartGame()
+    {
+        // Check if the "Game" scene exists.
+        if (Application.CanStreamedLevelBeLoaded("Game"))
+        {
+            SceneManager.LoadScene("Game");
+        }
+        else
+        {
+            Debug.LogError("The specified scene does not exist.");
+        }
+    }
+
     public void ShowOptionsMenu()
     {
         mainMenuUI.SetActive(false);
@@ -29,30 +39,14 @@ public class MenuManager : Singleton<MenuManager>
     {
         optionsMenuUI.SetActive(false);
         mainMenuUI.SetActive(true);
-
-        // Show and unlock the cursor
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
     }
-
     
-    public void HideMainMenu()
-    {
-        optionsMenuUI.SetActive(false);
-        mainMenuUI.SetActive(false);
-        
-        // Hide and lock the cursor
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
-
     public void QuitGame()
     {
-        // Quit the application
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false; // Quit in the Unity Editor
+        UnityEditor.EditorApplication.isPlaying = false;
 #else
-        Application.Quit(); // Quit in a standalone build
+    Application.Quit(); 
 #endif
     }
 }
