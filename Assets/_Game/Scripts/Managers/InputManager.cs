@@ -22,7 +22,6 @@ public class InputManager : Singleton<InputManager>
         _playerInput = new PlayerInput();
         
         _onFootActions = _playerInput.OnFoot;
-        //_inGameActions = _playerInput.InGame;
 
         if (!_playerController) _playerController = GetComponent<PlayerController>();
         if (!_playerLook) _playerLook = GetComponent<PlayerLook>();
