@@ -1,15 +1,15 @@
-using UnityEngine;
 using _Game.Scripts.LiDAR;
+using UnityEngine;
 
 public class InputManager : Singleton<InputManager>
 {
     [Header("Components")]
-    [SerializeField] private PlayerController playerController;
-    [SerializeField] private PlayerLook playerLook;
-    [SerializeField] private RayGun rayGun;
+    [SerializeField] private PlayerController _playerController;
+    [SerializeField] private PlayerLook _playerLook;
+    [SerializeField] private RayGun _rayGun;
 
-    private PlayerInput playerInput;
-    private PlayerInput.OnFootActions onFootActions;
+    private PlayerInput _playerInput;
+    private PlayerInput.OnFootActions _onFootActions;
 
     protected override void Awake()
     {
@@ -19,63 +19,60 @@ public class InputManager : Singleton<InputManager>
 
     private void InitializeComponents()
     {
-        playerInput = new PlayerInput();
+        _playerInput = new PlayerInput();
         
-        onFootActions = playerInput.OnFoot;
+        _onFootActions = _playerInput.OnFoot;
 
-        if (!playerController) playerController = GetComponent<PlayerController>();
-        if (!playerLook) playerLook = GetComponent<PlayerLook>();
-        if (!rayGun) rayGun = GetComponent<RayGun>();
+        if (!_playerController) _playerController = GetComponent<PlayerController>();
+        if (!_playerLook) _playerLook = GetComponent<PlayerLook>();
+        if (!_rayGun) _rayGun = GetComponent<RayGun>();
     }
 
     private void SetupInputActions()
     {
-        onFootActions.Enable();
-        SetupJumpActions();
-        SetupShootActions();
-        SetupMenuActions();
-    }
+        _onFootActions.Enable();
+        
+        // Jump
+        _onFootActions.Jump.performed += _ =>
+        {
+            _playerController.Jump();
+        };
 
-    private void SetupJumpActions()
-    {
-        onFootActions.Jump.performed += _ => playerController.Jump();
-    }
-
-    private void SetupShootActions()
-    {
-        onFootActions.Scan.started += _ => ChangeRayGunState(true);
-        onFootActions.Scan.canceled += _ => ChangeRayGunState(false);
-        onFootActions.Paint.started += _ => ChangeRayGunPaintingState(true);
-        onFootActions.Paint.canceled += _ => ChangeRayGunPaintingState(false);
-    }
-
-    private void SetupMenuActions()
-    {
-        onFootActions.Menu.started += _ => GameManager.Instance.TogglePauseMenu();
+        // Shooting actions
+        _onFootActions.Scan.started += _ => ChangeRayGunState(true);
+        _onFootActions.Scan.canceled += _ => ChangeRayGunState(false);
+        _onFootActions.Paint.started += _ => ChangeRayGunPaintingState(true);
+        _onFootActions.Paint.canceled += _ => ChangeRayGunPaintingState(false);
+        
+        // Pause Menu
+        _onFootActions.Menu.started += _ =>
+        {
+            GameManager.Instance.TogglePauseMenu();
+        };
     }
 
     private void ChangeRayGunState(bool scanning)
     {
-        rayGun.Scanning = scanning;
+        _rayGun.Scanning = scanning;
     }
 
     private void ChangeRayGunPaintingState(bool painting)
     {
-        rayGun.Painting = painting;
+        _rayGun.Painting = painting;
     }
 
     private void FixedUpdate()
     {
-        playerController.ProcessMove(onFootActions.Movement.ReadValue<Vector2>());
+        _playerController.ProcessMove(_onFootActions.Movement.ReadValue<Vector2>());
     }
 
     private void LateUpdate()
     {
-        playerLook.ProcessLook(onFootActions.Look.ReadValue<Vector2>());
+        _playerLook.ProcessLook(_onFootActions.Look.ReadValue<Vector2>());
     }
 
     private void OnDisable()
     {
-        onFootActions.Disable();
+        _onFootActions.Disable();
     }
 }
