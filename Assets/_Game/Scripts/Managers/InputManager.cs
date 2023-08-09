@@ -1,12 +1,14 @@
 using _Game.Scripts.LiDAR;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class InputManager : Singleton<InputManager>
 {
     [Header("Components")]
-    [SerializeField] private PlayerController _playerController;
-    [SerializeField] private PlayerLook _playerLook;
-    [SerializeField] private RayGun _rayGun;
+    [SerializeField] private PlayerController playerController;
+    [SerializeField] private PlayerLook playerLook;
+    [SerializeField] private RayGun rayGun;
+    [SerializeField] private PointRenderer pointRenderer;
 
     private PlayerInput _playerInput;
     private PlayerInput.OnFootActions _onFootActions;
@@ -23,9 +25,9 @@ public class InputManager : Singleton<InputManager>
         
         _onFootActions = _playerInput.OnFoot;
 
-        if (!_playerController) _playerController = GetComponent<PlayerController>();
-        if (!_playerLook) _playerLook = GetComponent<PlayerLook>();
-        if (!_rayGun) _rayGun = GetComponent<RayGun>();
+        if (!playerController) playerController = GetComponent<PlayerController>();
+        if (!playerLook) playerLook = GetComponent<PlayerLook>();
+        if (!rayGun) rayGun = GetComponent<RayGun>();
     }
 
     private void SetupInputActions()
@@ -35,7 +37,7 @@ public class InputManager : Singleton<InputManager>
         // Jump
         _onFootActions.Jump.performed += _ =>
         {
-            _playerController.Jump();
+            playerController.Jump();
         };
 
         // Shooting actions
@@ -49,26 +51,32 @@ public class InputManager : Singleton<InputManager>
         {
             GameManager.Instance.TogglePauseMenu();
         };
+        
+        // Clear Points
+        _onFootActions.Clear.performed += _ =>
+        {
+            pointRenderer.ClearAllPoints();
+        };
     }
 
     private void ChangeRayGunState(bool scanning)
     {
-        _rayGun.Scanning = scanning;
+        rayGun.Scanning = scanning;
     }
 
     private void ChangeRayGunPaintingState(bool painting)
     {
-        _rayGun.Painting = painting;
+        rayGun.Painting = painting;
     }
 
     private void FixedUpdate()
     {
-        _playerController.ProcessMove(_onFootActions.Movement.ReadValue<Vector2>());
+        playerController.ProcessMove(_onFootActions.Movement.ReadValue<Vector2>());
     }
 
     private void LateUpdate()
     {
-        _playerLook.ProcessLook(_onFootActions.Look.ReadValue<Vector2>());
+        playerLook.ProcessLook(_onFootActions.Look.ReadValue<Vector2>());
     }
 
     private void OnDisable()

@@ -6,6 +6,11 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private GameObject pauseMenuUI;
     private bool _isPaused;
 
+    private void Start()
+    {
+        CursorUtils.LockCursor();
+    }
+
     public void TogglePauseMenu()
     {
         _isPaused = !_isPaused;
