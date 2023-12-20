@@ -1,3 +1,4 @@
+using _Game.Scripts.LiDAR;
 using UnityEngine;
 
 namespace _Game.Scripts.Player
